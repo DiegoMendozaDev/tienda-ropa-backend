@@ -1,7 +1,12 @@
-{
+{    
+    "version": 2,
+    "regions": ["fra1"],
     "functions": {
         "api\/*.php": {
             "runtime": "vercel-php@0.7.1"
+        },
+        "api/index.php": {
+            "runtime": "vercel-php@0.7.3"
         }
     },
     "env": {
@@ -15,6 +20,11 @@
         {
             "src": "\/(.*)",
             "dest": "\/api\/index.php"
+        },
+        {
+            "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))$",
+            "dest": "/public/$1"
         }
-    ]
+    ],
+    "outputDirectory": "public"
 }
