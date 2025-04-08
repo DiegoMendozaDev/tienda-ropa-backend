@@ -141,8 +141,8 @@ CREATE TABLE `envio`(
   `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_entrega_estimada` timestamp NOT NULL,
   `fecha_entrega_real` timestamp NOT NULL,
-  `estado` VARCHAR(255) NOT NULL,
-)
+  `estado` VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
@@ -254,6 +254,11 @@ ALTER TABLE `pedidos`
 --
 ALTER TABLE `producto`
   ADD CONSTRAINT `fk_categoria_producto` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`);
+
+ALTER TABLE `envio`
+ADD PRIMARY KEY (`id_envio`),
+ADD CONSTRAINT `fk_envio_pedido` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos`(`id_pedido`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
