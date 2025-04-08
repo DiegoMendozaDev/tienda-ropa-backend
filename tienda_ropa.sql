@@ -134,6 +134,16 @@ CREATE TABLE `usuario` (
   `codigo_postal` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `envio`(
+  `id_envio` int NOT NULL,
+  `id_pedido` int NOT NULL,
+  `direccion` VARCHAR(255) NOT NULL,
+  `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_entrega_estimada` timestamp NOT NULL,
+  `fecha_entrega_real` timestamp NOT NULL,
+  `estado` VARCHAR(255) NOT NULL,
+)
+
 --
 -- Volcado de datos para la tabla `usuario`
 --
