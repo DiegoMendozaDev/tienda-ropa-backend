@@ -12,6 +12,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.4.1",
         "doctrine/orm": "^2.20.2",
         "doctrine/persistence": "*",
+        "lexik/jwt-authentication-bundle": "*",
         "nelmio/cors-bundle": "^2.5",
         "symfony/console": "7.2.*",
         "symfony/doctrine-bridge": "7.2.*",
@@ -19,7 +20,7 @@
         "symfony/flex": "^2.4.7",
         "symfony/framework-bundle": "7.2.*",
         "symfony/runtime": "7.2.*",
-        "symfony/security-bundle": "^7.2",
+        "symfony/security-bundle": "7.2.*",
         "symfony/validator": "7.2.*",
         "symfony/yaml": "7.2.*"
     },
