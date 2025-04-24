@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Entity\Usuario;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Config\Definition\Builder\MergeBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,14 +15,21 @@ class UsuarioController extends AbstractController
     #[Route('/crear', name:'crear', methods:['POST'])]
     public function create(EntityManagerInterface $entityManager, Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
+
         $data = json_decode($request->getContent(), true);
-        $requiredFields = ['nombre', 'email', 'contrasena', 'direccion', 'codigo_postal'];
+        $requiredFields = ['nombre', 'email', 'contrasena', 'repeatContrasena', 'direccion', 'codigo_postal', 'terms'];
         foreach ($requiredFields as $field) {
             if (empty($data[$field])) {
                 return $this->json(['error' => "El campo ". $field ." es obligatorio"], 400);
             }
         }
-        
+        if($data['repeatContrasena']!=$data['contrasena']){
+            return $this->json(['error' => "Las contraseñas tienen que coincidir."], 400);
+        }
+        $comprobacionEmail=$entityManager->getRepository(Usuario::class)->comprobarEmail($data['email']);
+        if($comprobacionEmail){
+            return $this->json(['error' => "Ya hay un usuario regitrado con ese email."], 400);
+        }
         $usuario = new Usuario();
         $usuario->setNombre($data['nombre']);
         $usuario->setEmail($data['email']);
@@ -114,11 +120,17 @@ class UsuarioController extends AbstractController
     #[Route('/ver_usuario', name : "ver_usuario", methods:["POST"])]
     public function ver_usuario(EntityManagerInterface $entityManager, Request $request): JsonResponse{
         $data = json_decode($request->getContent(), true);
+        if(!$data['email']){
+            return $this->json(['message'=> 'El email es obligatorio'],400);
+        }
         $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['email' => $data["email"]]);
-       return $this->json([
-        "id" => $usuario->getId()
-       ]);
-        
+        if(!$usuario){
+            return $this->json(['message'=> 'usuario no emcontrado'],400);
+        }else{
+            return $this->json([
+                "id" => $usuario->getId()
+               ],200);
+        }
     }
 
     

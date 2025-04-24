@@ -12,6 +12,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.4.1",
         "doctrine/orm": "^2.20.2",
         "doctrine/persistence": "*",
+        "nelmio/cors-bundle": "^2.5",
         "symfony/console": "7.2.*",
         "symfony/doctrine-bridge": "7.2.*",
         "symfony/dotenv": "7.2.*",

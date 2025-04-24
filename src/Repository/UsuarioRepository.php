@@ -24,4 +24,12 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+    public function comprobarEmail($email)
+    {
+        return $this->getEntityManager()->createQuery('
+            SELECT usuario.id_usuario
+            FROM App\Entity\Usuario usuario
+            WHERE usuario.email = :email
+        ')->setParameter(':email', $email)->getResult();
+    }
 }
