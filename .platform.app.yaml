@@ -36,6 +36,10 @@ hooks:
     build: |
         set -x -e
 
+        composer install --no-dev --optimize-autoloader
+        
+        bin/console cache:clear --env=prod
+
         curl -fs https://get.symfony.com/cloud/configurator | bash
         
         NODE_VERSION=22 symfony-build
