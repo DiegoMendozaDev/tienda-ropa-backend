@@ -113,9 +113,15 @@ class UsuarioController extends AbstractController
     public function comprobar(EntityManagerInterface $entityManager,UserPasswordHasherInterface $passwordHasher, Request $request): JsonResponse{
         $data = json_decode($request->getContent(), true);
         $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['email' => $data["email"]]);
+        if(!$usuario){
+            return $this->json(['error'=>'Contraseña o email incorrecto'],400); 
+        }
         $pass = $passwordHasher->isPasswordValid($usuario, $data["contrasena"]);
-        return $this->json($pass);
-        
+        if($pass){
+            return $this->json(['message'=>'Inicio de sesión con exito'],200); 
+        }else{
+            return $this->json(['error'=>'Contraseña o email incorrecto'],400); 
+        }
     }
     #[Route('/ver_usuario', name : "ver_usuario", methods:["POST"])]
     public function ver_usuario(EntityManagerInterface $entityManager, Request $request): JsonResponse{
