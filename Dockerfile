@@ -5,7 +5,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-r
       >> /etc/apk/repositories \
   && apk update
 
-# 2. Instalar sistema, Composer, PostgreSQL-dev y librerías de desarrollo
+# 2. Instalar sistema, librerías de desarrollo y extensiones PHP
 RUN apk add --no-cache \
       bash \
       curl \
@@ -13,7 +13,6 @@ RUN apk add --no-cache \
       postgresql-dev \
       libxml2-dev \
       libsodium-dev \
-      # no necesitamos paquete composer, ya viene en la imagen
   && docker-php-ext-install \
       pdo \
       pdo_mysql \
@@ -22,6 +21,11 @@ RUN apk add --no-cache \
       xml \
       sodium \
   && docker-php-ext-enable sodium
+
+# 2.b Instalar Composer manualmente
+RUN curl -sS https://getcomposer.org/installer | php \
+  && mv composer.phar /usr/local/bin/composer \
+  && chmod +x /usr/local/bin/composer
 
 # 3. Directorio de la aplicación y copia del código
 WORKDIR /app
