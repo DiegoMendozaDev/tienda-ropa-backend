@@ -1,7 +1,5 @@
 FROM php:8.2-fpm-alpine
 
-RUN mkdir -p /app/var/cache /app/var/log \
- && chown -R www-data:www-data /app/var
 # 1. Actualizar repositorios y paquetes base
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community" \
       >> /etc/apk/repositories \
