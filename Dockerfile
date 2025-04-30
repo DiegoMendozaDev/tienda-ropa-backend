@@ -25,7 +25,11 @@ RUN composer install --no-interaction --optimize-autoloader
 COPY . /app
 
 # 5. Instalar dependencias y optimizar autoload
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-scripts --optimize-autoloader
+
+# 4) (Opcional) Generar caché prod manualmente
+RUN php bin/console cache:clear --env=prod --no-warmup \
+ && php bin/console cache:warmup --env=prod
 
 # 6. Configurar Nginx y lanzar servicios
 COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
