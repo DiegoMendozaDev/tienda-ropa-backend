@@ -22,6 +22,9 @@ COPY . /app
 #  && npm install \
 #  && npm run build
 
+# Copia el principal
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+
 # Copiar la configuración de Nginx
 COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 
