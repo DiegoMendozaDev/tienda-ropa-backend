@@ -8,9 +8,9 @@ RUN apk add --no-cache \
       nginx \
       postgresql-dev \
       composer \
-      php8-ctype \
-      php8-xml \
-      php8-sodium \
+      php82-ctype \
+      php82-xml \
+      php82-sodium \
   && docker-php-ext-install \
       pdo \
       pdo_mysql \
@@ -20,7 +20,7 @@ RUN apk add --no-cache \
 # 2. Directorio de la aplicación
 WORKDIR /app
 
-# 3. Copiamos todo el código
+# 3. Copiamos todo el código (incluye bin/console)
 COPY . /app
 
 # 4. Instalamos dependencias de PHP
@@ -31,5 +31,3 @@ COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["sh", "-c", "nginx && php-fpm"]
-
-
