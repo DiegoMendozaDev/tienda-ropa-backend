@@ -1,38 +1,33 @@
 FROM php:8.2-fpm-alpine
 
-WORKDIR /app
-
-# Extensiones PHP
+# Instala dependencias de sistema y Composer
 RUN apk add --no-cache \
-    bash \
-    postgresql-dev \
-  && docker-php-ext-install pdo_pgsql
+      bash \
+      curl \
+      nginx \
+      composer \
+    # Instala dependencias de PHP (pdo, gd, etc. según necesites)
+/bin/sh -lc "docker-php-ext-install pdo pdo_mysql pdo_pgsql"
 
-# Instalar dependencias de PHP
-WORKDIR /app
-COPY composer.json composer.lock /app/
-RUN composer install --no-dev --optimize-autoloader
-# Copiar código
-COPY . /app
-
-# Build de assets (si los usas)
-# (opcional) copiar node y yarn si lo necesitas
-# RUN apk add --no-cache nodejs npm \
-#  && npm install \
-#  && npm run build
-
-# Copia el principal
-COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
-
-# Copiar la configuración de Nginx
-COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
-
-# Instalar Nginx, crear logs y arrancar
-RUN apk add --no-cache nginx bash \
- && mkdir -p /var/log/nginx \
+# Crea logs de Nginx
+RUN mkdir -p /var/log/nginx \
  && touch /var/log/nginx/access.log /var/log/nginx/error.log \
  && ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
+# Directorio de la aplicación
+WORKDIR /app
 
+# Copia solo composer.json y composer.lock, e instala dependencias
+COPY composer.json composer.lock /app/
+RUN composer install --no-dev --optimize-autoloader
+
+# Copia el resto del código
+COPY . /app
+
+# Copia configuración de Nginx
+COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
+
+# Exponer puerto y arrancar supervisión de Nginx + PHP-FPM
+EXPOSE 80
+CMD ["sh", "-c", "nginx && php-fpm"]
