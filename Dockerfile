@@ -22,22 +22,15 @@ COPY . /app
 #  && npm install \
 #  && npm run build
 
-# Instala nginx y bash
-RUN apk add --no-cache nginx bash
+# Copiar la configuración de Nginx
+COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 
-# Crea directorio y archivos de log antes de enlazar
-RUN mkdir -p /var/log/nginx \
+# Instalar Nginx, crear logs y arrancar
+RUN apk add --no-cache nginx bash \
+ && mkdir -p /var/log/nginx \
  && touch /var/log/nginx/access.log /var/log/nginx/error.log \
  && ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Copiar configuración de nginx si la tienes
-# COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
-# COPY config/nginx/nginx.conf  /etc/nginx/nginx.conf
-
-# Exponer puerto (el que uses en Render; por defecto 8080)
-EXPOSE 8080
-
-# Comando de arranque — aquí puedes usar php-fpm + nginx directamente
 CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
 
