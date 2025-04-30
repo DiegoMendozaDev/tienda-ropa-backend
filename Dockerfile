@@ -1,4 +1,3 @@
-# Etapa final: PHP-FPM con Alpine
 FROM php:8.2-fpm-alpine
 
 # 1. Habilitar repositorio community y actualizar índice
@@ -6,20 +5,22 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-r
       >> /etc/apk/repositories \
   && apk update
 
-# 2. Instalar sistema, Composer, PostgreSQL-dev y extensiones PHP requeridas
+# 2. Instalar sistema, Composer, PostgreSQL-dev y librerías de desarrollo
 RUN apk add --no-cache \
       bash \
       curl \
       nginx \
       postgresql-dev \
-      composer \
-      php82-ctype \
-      php82-xml \
-      php82-sodium \
+      libxml2-dev \
+      libsodium-dev \
+      # no necesitamos paquete composer, ya viene en la imagen
   && docker-php-ext-install \
       pdo \
       pdo_mysql \
       pdo_pgsql \
+      ctype \
+      xml \
+      sodium \
   && docker-php-ext-enable sodium
 
 # 3. Directorio de la aplicación y copia del código
