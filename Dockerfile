@@ -1,25 +1,31 @@
 # Etapa final: PHP-FPM con Alpine
 FROM php:8.2-fpm-alpine
 
-# Instala dependencias de sistema y cabeceras
+# 1. Instalamos dependencias de sistema, cabeceras de PostgreSQL y Composer
 RUN apk add --no-cache \
       bash \
       curl \
       nginx \
-      postgresql-dev
+      postgresql-dev \
+      composer \
+  && docker-php-ext-install \
+      pdo \
+      pdo_mysql \
+      pdo_pgsql
 
-# Directorio de la app
+# 2. Directorio de la aplicación
 WORKDIR /app
 
-# 1. Copia código y archivos de configuración desde el repositorio
+# 3. Copiamos todo el código primero (incluye bin/, src/, config/, composer.json, etc.)
 COPY . /app
 
-# 2. Instala dependencias de PHP (incluye la ejecución de @auto-scripts)
+# 4. Instalamos las dependencias de PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# 3. Copia configuración de Nginx (si fuese externa)
+# 5. Configuración de Nginx
 COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 
+# 6. Exponemos el puerto y arrancamos Nginx + PHP-FPM
 EXPOSE 80
 CMD ["sh", "-c", "nginx && php-fpm"]
 
