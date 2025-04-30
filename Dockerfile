@@ -20,6 +20,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 WORKDIR /app
 COPY composer.json composer.lock /app/
 RUN composer require symfony/flex --no-interaction --no-progress
+# Instalar dependencias (incluye dev para que MakerBundle esté disponible al registrar bundles)
+RUN composer install --no-interaction --optimize-autoloader
 COPY . /app
 
 # 5. Instalar dependencias y optimizar autoload
