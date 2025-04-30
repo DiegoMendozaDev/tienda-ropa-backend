@@ -1,30 +1,25 @@
-# Etapa 1: Binario de Composer
-FROM composer:2.5 AS composer-bin
-
 # Etapa final: PHP-FPM con Alpine
 FROM php:8.2-fpm-alpine
 
-# Copiamos Composer desde la etapa anterior
-COPY --from=composer-bin /usr/bin/composer /usr/local/bin/composer
-
-# Resto de instalaciones
+# Instala dependencias de sistema y cabeceras
 RUN apk add --no-cache \
       bash \
       curl \
       nginx \
-      postgresql-dev \
-  && docker-php-ext-install \
-      pdo \
-      pdo_mysql \
-      pdo_pgsql
+      postgresql-dev
 
+# Directorio de la app
 WORKDIR /app
 
-COPY composer.json composer.lock /app/
+# 1. Copia código y archivos de configuración desde el repositorio
+COPY . /app
+
+# 2. Instala dependencias de PHP (incluye la ejecución de @auto-scripts)
 RUN composer install --no-dev --optimize-autoloader
 
-COPY . /app
+# 3. Copia configuración de Nginx (si fuese externa)
 COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["sh", "-c", "nginx && php-fpm"]
+
