@@ -31,6 +31,13 @@ RUN composer install --no-dev --no-scripts --optimize-autoloader
 RUN php bin/console cache:clear --env=prod --no-warmup \
  && php bin/console cache:warmup --env=prod
 
+# Crea logs de Nginx
+RUN mkdir -p /var/log/nginx \
+&& touch /var/log/nginx/access.log /var/log/nginx/error.log \
+&& ln -sf /dev/stdout /var/log/nginx/access.log \
+&& ln -sf /dev/stderr /var/log/nginx/error.log
+# Copia el principal
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 # 6. Configurar Nginx y lanzar servicios
 COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
