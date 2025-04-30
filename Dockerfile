@@ -8,13 +8,10 @@ RUN apk add --no-cache \
     postgresql-dev \
   && docker-php-ext-install pdo_pgsql
 
-# Copiar dependencias de Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY composer.json composer.lock symfony.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 # Instalar dependencias de PHP
 WORKDIR /app
 COPY composer.json composer.lock /app/
+RUN composer install --no-dev --optimize-autoloader
 # Copiar código
 COPY . /app
 
