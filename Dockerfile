@@ -6,8 +6,10 @@ RUN apk add --no-cache \
       curl \
       nginx \
       composer \
-    # Instala dependencias de PHP (pdo, gd, etc. según necesites)
-/bin/sh -lc "docker-php-ext-install pdo pdo_mysql pdo_pgsql"
+  && docker-php-ext-install \
+      pdo \
+      pdo_mysql \
+      pdo_pgsql
 
 # Crea logs de Nginx
 RUN mkdir -p /var/log/nginx \
