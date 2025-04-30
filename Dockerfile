@@ -1,34 +1,38 @@
-# 1. Etapa de dependencias PHP
-FROM php:8.1-fpm-alpine AS composer_deps
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+FROM php:8.1-fpm-alpine
+
 WORKDIR /app
+
+# Extensiones PHP
+RUN apk add --no-cache \
+    bash \
+    postgresql-dev \
+  && docker-php-ext-install pdo_pgsql
+
+# Copiar dependencias de Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# 2. (Opcional) Etapa de assets front-end
-FROM node:16-alpine AS assets_build
-WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install
-COPY webpack.config.js postcss.config.js assets/ ./assets/
-RUN yarn encore production
-
-# 3. Imagen final de ejecución
-FROM php:8.1-fpm-alpine
-WORKDIR /app
-# Instalar nginx y demás utilidades
-RUN apk add --no-cache nginx bash
-COPY --from=composer_deps /app/vendor /app/vendor
-COPY --from=assets_build /app/public/build /app/public/build
+# Copiar código
 COPY . /app
-# Configuración de nginx y php-fpm
-COPY infrastructure/php-fpm/*.conf /usr/local/etc/php-fpm.d/
-COPY infrastructure/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY infrastructure/nginx/vhost.conf /etc/nginx/conf.d/default.conf
-# Redirigir logs a stdout/stderr
+
+# Build de assets (si los usas)
+# (opcional) copiar node y yarn si lo necesitas
+# RUN apk add --no-cache nodejs npm \
+#  && npm install \
+#  && npm run build
+
+# Configuración de logs
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+ && ln -sf /dev/stderr /var/log/nginx/error.log
+
+# Copiar configuración de nginx si la tienes
+# COPY config/nginx/vhost.conf /etc/nginx/conf.d/default.conf
+# COPY config/nginx/nginx.conf  /etc/nginx/nginx.conf
+
+# Exponer puerto (el que uses en Render; por defecto 8080)
 EXPOSE 8080
-# Opcional: usar Shoreman para orquestar PHP-FPM y nginx
-COPY Procfile /app/Procfile
-CMD ["shoreman"]
+
+# Comando de arranque — aquí puedes usar php-fpm + nginx directamente
+CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
+
