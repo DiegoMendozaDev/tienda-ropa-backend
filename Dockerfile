@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 WORKDIR /app
 
@@ -22,8 +22,13 @@ COPY . /app
 #  && npm install \
 #  && npm run build
 
-# Configuración de logs
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+# Instala nginx y bash
+RUN apk add --no-cache nginx bash
+
+# Crea directorio y archivos de log antes de enlazar
+RUN mkdir -p /var/log/nginx \
+ && touch /var/log/nginx/access.log /var/log/nginx/error.log \
+ && ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Copiar configuración de nginx si la tienes
