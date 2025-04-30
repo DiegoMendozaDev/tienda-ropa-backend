@@ -88,7 +88,7 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `estado`, `total`) VALUES
-(2, 4, '2025-02-20 16:35:00', 'comprado', 0.00);
+(2, 7, '2025-02-20 16:35:00', 'comprado', 0.00);
 
 -- --------------------------------------------------------
 
@@ -149,7 +149,6 @@ CREATE TABLE `envio`(
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombre`, `email`, `roles`, `contrasena`, `fecha_registro`, `direccion`, `codigo_postal`) VALUES
-(4, 'Diego', 'diego@gmail.com', '[]', '1234', '2025-02-19 19:32:34', 'C/laguna', '28025'),
 (7, 'Carlos', 'carlos@gmail.com', '[]', '$2y$13$GBkhlEERk3jH6SLP1q64FOwFEP.c78/NnGZyRH9Ludqniy2i9r.o2', '2025-02-21 13:09:24', 'laguna', '28025');
 
 --
