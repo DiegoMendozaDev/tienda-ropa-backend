@@ -5,28 +5,33 @@ FROM php:8.2-fpm-alpine
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community" \
       >> /etc/apk/repositories \
   && apk update \
-# 2. Instalar sistema, PostgreSQL-dev, Composer y extensiones PHP
+  \
+# 2. Instalar sistema, PostgreSQL-dev, Composer y extensiones PHP necesarias:
+#    - php8-ctype: ext-ctype
+#    - php8-xml:   ext-xml
+#    - php8-sodium: ext-sodium
   && apk add --no-cache \
        bash \
        curl \
        nginx \
        postgresql-dev \
        composer \
-       php8-ctype \      # ext-ctype :contentReference[oaicite:4]{index=4}
-       php8-xml   \      # ext-xml   :contentReference[oaicite:5]{index=5}
-       php8-sodium       # ext-sodium :contentReference[oaicite:6]{index=6}
+       php82-ctype \
+       php82-xml \
+       php82-sodium \
+  \
 # 3. Instalar drivers de base de datos y habilitar sodium
   && docker-php-ext-install \
        pdo \
        pdo_mysql \
-       pdo_pgsql \       # PDO para MySQL y PostgreSQL :contentReference[oaicite:7]{index=7}
-  && docker-php-ext-enable sodium  # activa ext-sodium :contentReference[oaicite:8]{index=8}
+       pdo_pgsql \
+  && docker-php-ext-enable sodium
 
-# 4. Directorio de trabajo y código
+# 4. Directorio de la aplicación
 WORKDIR /app
-COPY . /app
 
-# 5. Dependencias PHP
+# 5. Copiar todo el código (incluye bin/console) y ejecutar Composer
+COPY . /app
 RUN composer install --no-dev --optimize-autoloader
 
 # 6. Configuración de Nginx
