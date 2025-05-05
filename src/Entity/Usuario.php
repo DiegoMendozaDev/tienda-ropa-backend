@@ -50,6 +50,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->pedidos = new ArrayCollection();
+        $this->fecha_registro = new \DateTimeImmutable(); // o DateTime
     }
 
     public function getId(): ?int
