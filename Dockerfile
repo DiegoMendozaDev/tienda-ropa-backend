@@ -24,6 +24,9 @@ RUN composer require symfony/flex --no-interaction --no-progress
 RUN composer install --no-interaction --optimize-autoloader
 COPY . /app
 
+# Después de COPY . /app
+RUN chown -R www-data:www-data /app/var
+
 # 5. Instalar dependencias y optimizar autoload
 RUN composer install --no-dev --no-scripts --optimize-autoloader
 
