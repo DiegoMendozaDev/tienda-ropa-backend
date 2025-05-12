@@ -12,4 +12,12 @@ class ProductoRepository extends ServiceEntityRepository{
     {
         parent::__construct($managerRegistry, Producto::class);
     }
+    public function masVendidos()
+    {
+        return $this->createQueryBuilder('p')
+        ->orderBy('p.unidades_vendidas', 'DESC')
+        ->setMaxResults(3)
+        ->getQuery()
+        ->getResult();
+    }
 }

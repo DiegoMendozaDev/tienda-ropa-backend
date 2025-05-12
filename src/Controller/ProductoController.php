@@ -11,30 +11,49 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 
-#[Route('/api/productos', name:'api_productos')]
-class ProductoController extends AbstractController{
-    #[Route('/ver', name:'_ver', methods: ['get'])]
-    public function index(EntityManagerInterface $entityManager): JsonResponse{
+#[Route('/api/productos', name: 'api_productos')]
+class ProductoController extends AbstractController
+{
+    #[Route('/ver', name: '_ver', methods: ['get'])]
+    public function index(EntityManagerInterface $entityManager): JsonResponse
+    {
         $productos = $entityManager->getRepository(Producto::class)
-        ->findAll();
+            ->findAll();
         $data = [];
-        foreach ($productos as $producto){
-            $data[] = ['id' => $producto->getId(),
-                        'nombre' => $producto->getNombre(),
-                        'descripcion' => $producto->getDescripcion(),
-                        'precio' => $producto->getPrecio(),
-                        'marca' => $producto->getMarca(),
-                        'id_categoria' => $producto->getCategoria()->getId(),
-                        'foto' => $producto->getFoto(),
-                        'stock' => $producto->getStock()
-        ];
+        foreach ($productos as $producto) {
+            $data[] = [
+                'id' => $producto->getId(),
+                'nombre' => $producto->getNombre(),
+                'descripcion' => $producto->getDescripcion(),
+                'precio' => $producto->getPrecio(),
+                'marca' => $producto->getMarca(),
+                'id_categoria' => $producto->getCategoria()->getId(),
+                'foto' => $producto->getFoto(),
+                'stock' => $producto->getStock(),
+                'unidades_vendidas' => $producto->getUnidades_vendidas()
+            ];
+        }
+        return $this->json($data, 200);
+    }
+    #[Route('/masVendidos', name: '_masVendidos', methods: ['get'])]
+    public function masVendidos(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $productos = $entityManager->getRepository(Producto::class)->masVendidos();
+        $data = [];
+        foreach ($productos as $producto) {
+            $data[] = [
+                'foto' => $producto->getFoto(),
+                'nombre' => $producto->getNombre(),
+                'descripcion' => $producto->getDescripcion(),
+            ];
         }
         return $this->json($data, 200);
     }
     #[Route('/create', name: '_create', methods: ['post'])]
-    public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse{
+    public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
-        if(!isset($data['nombre']) ||!isset($data['precio'])){
+        if (!isset($data['nombre']) || !isset($data['precio'])) {
             return $this->json(['error' => 'invalid data'], 400);
         }
         $producto = new Producto();
@@ -60,14 +79,15 @@ class ProductoController extends AbstractController{
         ];
         return $this->json($data, 201);
     }
-    #[Route('/update/{id}', name:'_update', methods: ['PUT'])]
-    public function update(EntityManagerInterface $entityManager, Request $request, int $id) : JsonResponse{
+    #[Route('/update/{id}', name: '_update', methods: ['PUT'])]
+    public function update(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    {
         $producto = $entityManager->getRepository(Producto::class)->find($id);
-        if(!$producto){
-            return $this->json('Producto no encontrado  '. $id, 404);
+        if (!$producto) {
+            return $this->json('Producto no encontrado  ' . $id, 404);
         }
         $data = json_decode($request->getContent(), true);
-        if(!isset($data['nombre']) || !isset($data['precio'])){
+        if (!isset($data['nombre']) || !isset($data['precio'])) {
             return $this->json(["error" => "Invalid data"], 400);
         }
         $producto->setNombre($data['nombre']);
@@ -82,13 +102,14 @@ class ProductoController extends AbstractController{
         return $this->json($data, 200);
     }
     #[Route('/delete/{id}', name: '_delete', methods: ['delete'])]
-    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse{
+    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
         $producto = $entityManager->getRepository(Producto::class)->find($id);
-        if(!$producto){
-            return $this->json('Producto no encontrado '. $id, 404);
+        if (!$producto) {
+            return $this->json('Producto no encontrado ' . $id, 404);
         }
         $entityManager->remove($producto);
         $entityManager->flush();
-        return $this->json(["message" => 'Eliminado con exito el id p'. $id],200);
+        return $this->json(["message" => 'Eliminado con exito el id p' . $id], 200);
     }
 }

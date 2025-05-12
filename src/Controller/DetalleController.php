@@ -69,7 +69,6 @@ class DetalleController extends AbstractController {
         }
         $data = json_decode($request->getContent(), true);
         
-        
         $producto = $entityManager->getRepository(Producto::class)->find($data['id_producto']);
         $detalle->setProducto($producto);
         $detalle->setCantidad($data['cantidad']);

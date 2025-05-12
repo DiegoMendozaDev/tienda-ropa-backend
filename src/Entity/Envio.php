@@ -11,10 +11,7 @@ class Envio
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id_envio = null;
 
     #[ORM\Column(length: 255)]
@@ -32,25 +29,9 @@ class Envio
     #[ORM\Column(length: 255)]
     private ?string $estado = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Pedidos $id_pedido = null;
-
     public function getId(): ?int
     {
-        return $this->id;
-    }
-
-    public function getIdEnvio(): ?int
-    {
         return $this->id_envio;
-    }
-
-    public function setIdEnvio(int $id_envio): static
-    {
-        $this->id_envio = $id_envio;
-
-        return $this;
     }
 
     public function getDireccion(): ?string
@@ -113,15 +94,4 @@ class Envio
         return $this;
     }
 
-    public function getIdPedido(): ?Pedidos
-    {
-        return $this->id_pedido;
-    }
-
-    public function setIdPedido(Pedidos $id_pedido): static
-    {
-        $this->id_pedido = $id_pedido;
-
-        return $this;
-    }
 }
