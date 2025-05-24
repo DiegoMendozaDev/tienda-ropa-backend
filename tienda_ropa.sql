@@ -99,6 +99,7 @@ INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `estado`, `tot
 CREATE TABLE `producto` (
   `id_producto` int(11) NOT NULL,
   `nombre` varchar(150) NOT NULL,
+  `genero` varchar(150) NOT NULL,
   `descripcion` text DEFAULT NULL,
   `precio` decimal(10,2) NOT NULL,
   `id_categoria` int(11) NOT NULL,
