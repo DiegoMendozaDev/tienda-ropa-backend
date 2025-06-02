@@ -138,6 +138,5 @@ class UsuarioController extends AbstractController
                 ],200);
         }
     }
-
-    
+   
 }

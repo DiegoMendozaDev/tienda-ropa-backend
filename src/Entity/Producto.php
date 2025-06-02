@@ -43,6 +43,8 @@ class Producto{
     #[ORM\Column(type: "integer")]
     private ?int $unidades_vendidas = null;
 
+    #[ORM\Column(type: "string", length: 150)]
+    private ?string $genero = null;
     public function __construct()
     {
         $this->detalles = new ArrayCollection();
@@ -122,6 +124,15 @@ class Producto{
     public function setUnidades_vendidas(int $unidades_vendidas): static
     {
         $this->unidades_vendidas = $unidades_vendidas;
+        return $this;
+    }
+        public function getGenero(): string
+    {
+        return $this->genero;
+    }
+    public function setGenero(string $genero): static
+    {
+        $this->genero = $genero;
         return $this;
     }
     public function getDetalle():Collection

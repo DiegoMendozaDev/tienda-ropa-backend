@@ -118,4 +118,61 @@ class ProductoController extends AbstractController
         $entityManager->flush();
         return $this->json(["message" => 'Eliminado con exito el id p' . $id], 200);
     }
+    #[Route('/categoria/{id}', name:'_categoria', methods: ['GET'])]
+    public function categoria(EntityManagerInterface $entityManager, int $id, Request $request): JsonResponse{
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
+        $offset = ($page - 1) * $limit;
+
+        $categoria = $entityManager->getRepository(Categoria::class)->find($id);
+        if (!$categoria) {
+            // La categoría no existe
+            return $this->json(
+                ['error' => "Categoría con id {$id} no encontrada"],
+                404
+            );
+        }
+        $nombreCategoria = $categoria->getNombre();
+        // Obtenemos los productos de esa categoría (puede devolver array vacío)
+        $productos = $entityManager->getRepository(Producto::class)->verCategoria($id, $limit, $offset);
+
+        $data = array_map(fn(Producto $p) => [
+            'id'            => $p->getId(),
+            'nombre'        => $p->getNombre(),
+            'descripcion'   => $p->getDescripcion(),
+            'precio'        => $p->getPrecio(),
+            'marca'         => $p->getMarca(),
+            'foto'          => $p->getFoto(),
+            'stock'         => $p->getStock(),
+            'unidades_vendidas' => $p->getUnidades_vendidas(),
+            'id_categoria'  => $p->getCategoria()->getId(),
+            'categoria' => $nombreCategoria
+        ], $productos);
+        return $this->json($data, 200);
+    }
+
+    #[Route('/genero/{genero}', name:'_genero', methods: ['GET'])]
+    public function verGenero(EntityManagerInterface $entityManager, string $genero, Request $request): JsonResponse{
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
+        $offset = ($page - 1) * $limit;
+
+        $productos = $entityManager->getRepository(Producto::class)->verGenero($genero, $limit, $offset);
+
+        // 2) Siempre devolvemos 200 OK, incluso si $productos es []
+        $data = array_map(fn(Producto $p) => [
+            'id'                 => $p->getId(),
+            'nombre'             => $p->getNombre(),
+            'descripcion'        => $p->getDescripcion(),
+            'precio'             => $p->getPrecio(),
+            'marca'              => $p->getMarca(),
+            'foto'               => $p->getFoto(),
+            'stock'              => $p->getStock(),
+            'unidades_vendidas'  => $p->getUnidades_Vendidas(),
+            'id_categoria'       => $p->getCategoria()->getId(),
+            'genero'             => $p->getGenero(),
+        ], $productos);
+
+        return $this->json($data, 200);
+    }
 }
