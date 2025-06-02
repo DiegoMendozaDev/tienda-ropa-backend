@@ -19,11 +19,27 @@ class DetalleController extends AbstractController {
         $data = [];
         foreach($detalles as $detalle){
             $data[] = [
-                'id_pedido' => $detalle->getPedido(),
-                'id_producto' => $detalle->getProducto(),
+                'id_pedido' => $detalle->getPedido()->getId(),
+                'id_producto' => $detalle->getProducto()->getId(),
                 'cantidad' => $detalle->getCantidad(),
                 'precio_unitario' => $detalle->getPrecio_Unitario()
             ];
+        }
+        return $this->json($data,200);
+    }
+    #[Route('/verDetallesPedidos/:id', name:'_verDetallePedidos', methods : 'get')]
+    public function verDetalles(EntityManagerInterface $entityManager, int $id) : JsonResponse{
+        $detalles = $entityManager->getRepository(DetallePedido::class)->findAll();
+        $data = [];
+        foreach($detalles as $detalle){
+            if($detalle->getPedido()->getId() == $id){
+                $data[] = [
+                    'id_pedido' => $detalle->getPedido()->getId(),
+                    'id_producto' => $detalle->getProducto()->getId(),
+                    'cantidad' => $detalle->getCantidad(),
+                    'precio_unitario' => $detalle->getPrecio_Unitario()
+                ];
+            }
         }
         return $this->json($data,200);
     }
@@ -72,8 +88,8 @@ class DetalleController extends AbstractController {
         $producto = $entityManager->getRepository(Producto::class)->find($data['id_producto']);
         $detalle->setProducto($producto);
         $detalle->setCantidad($data['cantidad']);
-        $detalle->getPrecio_Unitario($data['precio_unitario']);
-        $entityManager->flush();
+        $detalle->setPrecio_Unitario($data['precio_unitario']);
+        $entityManager->flush(); 
         return $this->json($data, 200);
 
     }
