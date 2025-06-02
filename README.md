@@ -7,4 +7,5 @@ Dependencias:
 - composer require nelmio/cors-bundle
 - Descomentar en php.ini extension=sodium
 - composer require lexik/jwt-authentication-bundle --with-all-dependencies
+- En el archivo xampp/php/php.ini activar estas lineas (extension=pdo_pgsqlextension=pgsql)
 

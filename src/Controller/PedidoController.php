@@ -30,9 +30,9 @@ class PedidoController extends AbstractController {
         }
         return $this->json(['pedidos'=> $data], 200);
     }
-    #[Route('/verCarrito', name: 'verCarrito', methods:['GET'])]
+    #[Route('/verCarrito', name: 'verCarrito', methods:['POST'])]
     public function verUno(EntityManagerInterface $entityManager, Request $request): JsonResponse
-    {
+    {  
         $data = json_decode($request->getContent(),true);
         if(!isset($data['estado'])){
             return $this->json(['Error'=>'Fatal Error'],400);

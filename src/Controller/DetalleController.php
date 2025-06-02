@@ -19,8 +19,8 @@ class DetalleController extends AbstractController {
         $data = [];
         foreach($detalles as $detalle){
             $data[] = [
-                'id_pedido' => $detalle->getId_pedido(),
-                'id_producto' => $detalle->getId_producto(),
+                'id_pedido' => $detalle->getPedido(),
+                'id_producto' => $detalle->getProducto(),
                 'cantidad' => $detalle->getCantidad(),
                 'precio_unitario' => $detalle->getPrecio_Unitario()
             ];
