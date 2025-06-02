@@ -15,25 +15,31 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductoController extends AbstractController
 {
     #[Route('/ver', name: '_ver', methods: ['get'])]
-    public function index(EntityManagerInterface $entityManager): JsonResponse
+    public function index(EntityManagerInterface $entityManager,Request $request): JsonResponse
     {
-        $productos = $entityManager->getRepository(Producto::class)
-            ->findAll();
-        $data = [];
-        foreach ($productos as $producto) {
-            $data[] = [
-                'id' => $producto->getId(),
-                'nombre' => $producto->getNombre(),
-                'descripcion' => $producto->getDescripcion(),
-                'precio' => $producto->getPrecio(),
-                'marca' => $producto->getMarca(),
-                'id_categoria' => $producto->getCategoria()->getId(),
-                'foto' => $producto->getFoto(),
-                'stock' => $producto->getStock(),
-                'unidades_vendidas' => $producto->getUnidades_vendidas()
-            ];
-        }
-        return $this->json($data, 200);
+    $page = $request->query->getInt('page', 1);
+    $limit = 12;
+    $offset = ($page - 1) * $limit;
+
+    $productos = $entityManager->getRepository(Producto::class)
+        ->findBy([], null, $limit, $offset);
+
+    $data = [];
+    foreach ($productos as $producto) {
+        $data[] = [
+            'id' => $producto->getId(),
+            'nombre' => $producto->getNombre(),
+            'descripcion' => $producto->getDescripcion(),
+            'precio' => $producto->getPrecio(),
+            'marca' => $producto->getMarca(),
+            'id_categoria' => $producto->getCategoria()->getId(),
+            'foto' => $producto->getFoto(),
+            'stock' => $producto->getStock(),
+            'unidades_vendidas' => $producto->getUnidades_vendidas()
+        ];
+    }
+
+    return $this->json($data, 200);
     }
     #[Route('/masVendidos', name: '_masVendidos', methods: ['get'])]
     public function masVendidos(EntityManagerInterface $entityManager): JsonResponse

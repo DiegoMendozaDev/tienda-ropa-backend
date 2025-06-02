@@ -79,7 +79,6 @@ class PedidoController extends AbstractController {
             $entityManager->flush();
             return $this->json(["id_pedido"=>$pedido->getId()], 200);
         }
-
     }
     #[Route('/eliminar/{id}',name: 'eliminar', methods:['DELETE'])]
     public function eliminar(EntityManagerInterface $entityManager,Request $request, int $id):JsonResponse

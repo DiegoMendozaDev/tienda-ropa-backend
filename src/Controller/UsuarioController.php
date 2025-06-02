@@ -135,7 +135,7 @@ class UsuarioController extends AbstractController
         }else{
             return $this->json([
                 "id" => $usuario->getId()
-               ],200);
+                ],200);
         }
     }
 
