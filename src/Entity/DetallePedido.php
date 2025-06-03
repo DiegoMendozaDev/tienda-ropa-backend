@@ -13,20 +13,23 @@ class DetallePedido
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type : 'integer')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id_detalle = null;
     #[ORM\Column(type: 'integer')]
     private ?int $cantidad = null;
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $precio_unitario = null;
-    #[ORM\ManyToOne(targetEntity: Pedidos::class, inversedBy:"detalles")]
+    #[ORM\Column(type: "string", length: 255)]
+    private ?string $foto = null;
+
+    #[ORM\ManyToOne(targetEntity: Pedidos::class, inversedBy: "detalles")]
     #[ORM\JoinColumn(name: "id_pedido", referencedColumnName: "id_pedido")]
     private ?Pedidos $pedido = null;
-    #[ORM\ManyToOne(targetEntity: Producto::class, inversedBy:"detalles")]
+    #[ORM\ManyToOne(targetEntity: Producto::class, inversedBy: "detalles")]
     #[ORM\JoinColumn(name: "id_producto", referencedColumnName: "id_producto")]
     private ?Producto $producto = null;
 
-   
+
     public function getId_Detalle(): ?int
     {
         return $this->id_detalle;
@@ -65,6 +68,15 @@ class DetallePedido
     public function setPedido(?Pedidos $pedido): static
     {
         $this->pedido = $pedido;
+        return $this;
+    }
+    public function getFoto(): string
+    {
+        return $this->foto;
+    }
+    public function setFoto(string $foto): static
+    {
+        $this->foto = $foto;
         return $this;
     }
 }

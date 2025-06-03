@@ -53,7 +53,8 @@ class PedidoController extends AbstractController {
                 'id_detalle' => $detalle->getId_Detalle(),
                 'nombre' => $detalle->getProducto()->getNombre(),
                 'precio' => $detalle->getProducto()->getPrecio(),
-                'cantidad' => $detalle->getCantidad()
+                'cantidad' => $detalle->getCantidad(),
+                'foto'=> $detalle->getFoto()
             ];
         }
 
