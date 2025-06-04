@@ -50,6 +50,7 @@ class PedidoController extends AbstractController {
         $detalles = $pedido->getDetalles()->getValues();
         foreach ($detalles as $detalle) {
             $data[]=[
+                'id_producto'=> $detalle->getProducto()->getId(),
                 'id_detalle' => $detalle->getId_Detalle(),
                 'nombre' => $detalle->getProducto()->getNombre(),
                 'precio' => $detalle->getProducto()->getPrecio(),
