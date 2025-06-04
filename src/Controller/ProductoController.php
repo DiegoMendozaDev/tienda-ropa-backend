@@ -71,6 +71,8 @@ class ProductoController extends AbstractController
         $producto->setCategoria($categoria);
         $producto->setFoto($data['foto']);
         $producto->setStock($data['stock']);
+        $producto->setUnidades_vendidas($data['unidades_vendidas']);
+        $producto->setGenero($data['genero']);
         $entityManager->persist($producto);
         $entityManager->flush();
         $data = [
@@ -82,6 +84,8 @@ class ProductoController extends AbstractController
             'marca' => $producto->getMarca(),
             'foto' => $producto->getFoto(),
             'stock' => $producto->getStock(),
+            'unidades_vendidas' => $producto->getUnidades_vendidas(),
+            'genero' => $producto->getGenero()
         ];
         return $this->json($data, 201);
     }
