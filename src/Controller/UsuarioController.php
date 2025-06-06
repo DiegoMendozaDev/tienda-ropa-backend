@@ -134,7 +134,8 @@ class UsuarioController extends AbstractController
             return $this->json(['message'=> 'usuario no emcontrado'],400);
         }else{
             return $this->json([
-                "id" => $usuario->getId()
+                "id" => $usuario->getId(),
+                "rol" => $usuario->getRoles()
                 ],200);
         }
     }
