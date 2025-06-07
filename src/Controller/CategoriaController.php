@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Categoria;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,6 +24,24 @@ class CategoriaController extends AbstractController{
             ];
         }
         return $this->json($data,200);
+    }
+#[Route('/ver_categoria/{id}', name: '_ver_categoria', methods: ['GET'])]
+    public function vercategoria(EntityManagerInterface $entitymanager, int $id): JsonResponse{
+        $categoria = $entitymanager->getRepository(Categoria::class)->find($id);
+        if (!$categoria) {
+            // La categoría no existe
+            return $this->json(
+                ['error' => "Categoría con id {$id} no encontrada"],
+                404
+            );
+        }
+
+        $data[] = [
+            "id_categoria" => $categoria->getId(),
+            "nombre" => $categoria->getNombre()
+        ];
+
+        return $this->json($data, 200);
     }
     #[Route('/create', name:"_create", methods: ['post'])]
     public function create(EntityManagerInterface $entityManager, Request $request) : JsonResponse{
