@@ -70,7 +70,6 @@ class DetalleController extends AbstractController
         if ($detalle) {
             $detalle = $entityManager->getRepository(DetallePedido::class)->find($detalle[0]['id_detalle']);
             $detalle->setCantidad($detalle->getCantidad() + 1);
-            $producto->setStock($producto->getStock() - 1);
             $entityManager->flush();
         } else {
             $detalle = new DetallePedido();
@@ -79,7 +78,6 @@ class DetalleController extends AbstractController
             $detalle->setCantidad($data['cantidad']);
             $detalle->setPrecio_Unitario($producto->getPrecio());
             $detalle->setFoto($producto->getFoto());
-            $producto->setStock($producto->getStock() - 1);
             $entityManager->persist($detalle);
             $entityManager->flush();
         }
