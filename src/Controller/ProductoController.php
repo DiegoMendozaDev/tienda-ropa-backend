@@ -35,6 +35,7 @@ class ProductoController extends AbstractController
             'id_categoria' => $producto->getCategoria()->getId(),
             'foto' => $producto->getFoto(),
             'stock' => $producto->getStock(),
+            'genero' => $producto->getGenero(),
             'unidades_vendidas' => $producto->getUnidades_vendidas()
         ];
     }
