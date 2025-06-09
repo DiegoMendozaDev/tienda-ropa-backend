@@ -78,7 +78,7 @@ class ProductoController extends AbstractController
         $filename = uniqid().'.'.$fotoFile->guessExtension();
         // uploads_directory lo defines en config/services.yaml apuntando a public/uploads
         $fotoFile->move($this->getParameter('uploads_directory'), $filename);
-        $producto->setFoto('/uploads/'.$filename);
+        $producto->setFoto('https://tienda-ropa-backend-xku2.onrender.com/uploads/'.$filename);
         $producto->setStock($data['stock']);
         $producto->setUnidades_vendidas($data['unidades_vendidas']);
         $producto->setGenero($data['genero']);
