@@ -70,7 +70,15 @@ class ProductoController extends AbstractController
         $producto->setMarca($data['marca']);
         $categoria = $entityManager->getRepository(Categoria::class)->find($data['id_categoria']);
         $producto->setCategoria($categoria);
-        $producto->setFoto($data['foto']);
+        $fotoFile = $request->files->get('foto');
+        if (!$fotoFile) {
+            return $this->json(['error'=>'No se subió foto'], 400);
+        }
+
+        $filename = uniqid().'.'.$fotoFile->guessExtension();
+        // uploads_directory lo defines en config/services.yaml apuntando a public/uploads
+        $fotoFile->move($this->getParameter('uploads_directory'), $filename);
+        $producto->setFoto('/uploads/'.$filename);
         $producto->setStock($data['stock']);
         $producto->setUnidades_vendidas($data['unidades_vendidas']);
         $producto->setGenero($data['genero']);
