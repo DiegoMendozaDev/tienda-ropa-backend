@@ -141,6 +141,14 @@ class ProductoController extends AbstractController
         if (!$producto) {
             return $this->json('Producto no encontrado ' . $id, 404);
         }
+        // 1) Eliminar el fichero físicamente
+        $fotoUrl = $producto->getFoto(); 
+        $uploadsDir = $this->getParameter('uploads_directory'); // p.ej. '%kernel.project_dir%/public/uploads'
+        $filename = basename(parse_url($fotoUrl, PHP_URL_PATH));
+        $fullpath = $uploadsDir . DIRECTORY_SEPARATOR . $filename;
+        if (file_exists($fullpath)) {
+            @unlink($fullpath);
+        }
         $entityManager->remove($producto);
         $entityManager->flush();
         return $this->json(["message" => 'Eliminado con exito el id p' . $id], 200);
