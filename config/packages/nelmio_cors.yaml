@@ -1,5 +1,8 @@
 nelmio_cors:
     defaults:
+        allow_origin: 
+        - 'https://tienda-ropa-frontend.vercel.app'
+        - 'http://localhost:5173'
         allow_credentials: true
         allow_headers: ['Content-Type', 'Authorization']
         allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
