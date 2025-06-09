@@ -74,6 +74,12 @@ class ProductoController extends AbstractController
         if (!isset($precio)) {
             return $this->json(['error' => 'precio obligatorio'], 400);
         }
+        if($precio<0){
+            return $this->json(['error'=> 'el precio no puede ser negativo'], 400);
+        }
+        if($stock<0){
+            return $this->json(['error'=> 'el stock no puede ser negativo'], 400);
+        }
         $producto = new Producto();
         $producto->setNombre($nombre);
         $producto->setDescripcion($descripcion);
