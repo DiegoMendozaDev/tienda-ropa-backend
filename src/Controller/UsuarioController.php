@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Usuario;
+use App\Entity\Pedidos;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,7 +72,11 @@ class UsuarioController extends AbstractController
         if (!$usuario) {
             return $this->json(['error' => "Usuario con id {$id} no encontrado"], 404);
         }
-        
+            // 1) Borramos todos los pedidos de ese usuario
+        $pedidos = $entityManager->getRepository(Pedidos::class)->findBy(['usuario' => $usuario]);
+        foreach ($pedidos as $pedido) {
+            $entityManager->remove($pedido);
+        }
         $entityManager->remove($usuario);
         $entityManager->flush();
 
