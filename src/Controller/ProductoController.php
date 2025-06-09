@@ -56,52 +56,25 @@ class ProductoController extends AbstractController
         }
         return $this->json($data, 200);
     }
+
     #[Route('/create', name: '_create', methods: ['post'])]
     public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $nombre = $request->request->get('nombre');
-        $descripcion = $request->request->get('descripcion', '');
-        $precio = $request->request->get('precio');
-        $marca = $request->request->get('marca', '');
-        $idCategoria = $request->request->get('id_categoria');
-        $stock = $request->request->get('stock', 0);
-        $unidadesVend = $request->request->get('unidades_vendidas', 0);
-        $genero = $request->request->get('genero', '');
-        
-        if (!isset($nombre)) {
-            return $this->json(['error' => 'nombre obligatorio'], 400);
-        }
-        if (!isset($precio)) {
-            return $this->json(['error' => 'precio obligatorio'], 400);
-        }
-        if($precio<0){
-            return $this->json(['error'=> 'el precio no puede ser negativo'], 400);
-        }
-        if($stock<0){
-            return $this->json(['error'=> 'el stock no puede ser negativo'], 400);
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['nombre']) || !isset($data['precio'])) {
+            return $this->json(['error' => 'invalid data'], 400);
         }
         $producto = new Producto();
-        $producto->setNombre($nombre);
-        $producto->setDescripcion($descripcion);
-        $producto->setPrecio($precio);
-        $producto->setMarca($marca);
-        $categoria = $entityManager->getRepository(Categoria::class)->find($idCategoria);
-        if (!$categoria) {
-            return $this->json(['error' => 'Categoría no encontrada'], 404);
-        }
+        $producto->setNombre($data['nombre']);
+        $producto->setDescripcion($data['descripcion']);
+        $producto->setPrecio($data['precio']);
+        $producto->setMarca($data['marca']);
+        $categoria = $entityManager->getRepository(Categoria::class)->find($data['id_categoria']);
         $producto->setCategoria($categoria);
-        $fotoFile = $request->files->get('foto');
-        if (!$fotoFile) {
-            return $this->json(['error'=>'No se subió foto'], 400);
-        }
-
-        $filename = uniqid().'.'.$fotoFile->guessExtension();
-        // uploads_directory lo defines en config/services.yaml apuntando a public/uploads
-        $fotoFile->move($this->getParameter('uploads_directory'), $filename);
-        $producto->setFoto('https://tienda-ropa-backend-xku2.onrender.com/uploads/'.$filename);
-        $producto->setStock($stock);
-        $producto->setUnidades_vendidas($unidadesVend);
-        $producto->setGenero($genero);
+        $producto->setFoto($data['foto']);
+        $producto->setStock($data['stock']);
+        $producto->setUnidades_vendidas($data['unidades_vendidas']);
+        $producto->setGenero($data['genero']);
         $entityManager->persist($producto);
         $entityManager->flush();
         $data = [
@@ -118,6 +91,7 @@ class ProductoController extends AbstractController
         ];
         return $this->json($data, 201);
     }
+    
     #[Route('/update/{id}', name: '_update', methods: ['PUT'])]
     public function update(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
     {
