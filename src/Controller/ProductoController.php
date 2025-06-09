@@ -59,16 +59,30 @@ class ProductoController extends AbstractController
     #[Route('/create', name: '_create', methods: ['post'])]
     public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        if (!isset($data['nombre']) || !isset($data['precio'])) {
-            return $this->json(['error' => 'invalid data'], 400);
+        $nombre = $request->request->get('nombre');
+        $descripcion = $request->request->get('descripcion', '');
+        $precio = $request->request->get('precio');
+        $marca = $request->request->get('marca', '');
+        $idCategoria = $request->request->get('id_categoria');
+        $stock = $request->request->get('stock', 0);
+        $unidadesVend = $request->request->get('unidades_vendidas', 0);
+        $genero = $request->request->get('genero', '');
+        
+        if (!isset($nombre)) {
+            return $this->json(['error' => 'nombre obligatorio'], 400);
+        }
+        if (!isset($precio)) {
+            return $this->json(['error' => 'precio obligatorio'], 400);
         }
         $producto = new Producto();
-        $producto->setNombre($data['nombre']);
-        $producto->setDescripcion($data['descripcion']);
-        $producto->setPrecio($data['precio']);
-        $producto->setMarca($data['marca']);
-        $categoria = $entityManager->getRepository(Categoria::class)->find($data['id_categoria']);
+        $producto->setNombre($nombre);
+        $producto->setDescripcion($descripcion);
+        $producto->setPrecio($precio);
+        $producto->setMarca($marca);
+        $categoria = $entityManager->getRepository(Categoria::class)->find($idCategoria);
+        if (!$categoria) {
+            return $this->json(['error' => 'Categoría no encontrada'], 404);
+        }
         $producto->setCategoria($categoria);
         $fotoFile = $request->files->get('foto');
         if (!$fotoFile) {
@@ -79,9 +93,9 @@ class ProductoController extends AbstractController
         // uploads_directory lo defines en config/services.yaml apuntando a public/uploads
         $fotoFile->move($this->getParameter('uploads_directory'), $filename);
         $producto->setFoto('https://tienda-ropa-backend-xku2.onrender.com/uploads/'.$filename);
-        $producto->setStock($data['stock']);
-        $producto->setUnidades_vendidas($data['unidades_vendidas']);
-        $producto->setGenero($data['genero']);
+        $producto->setStock($stock);
+        $producto->setUnidades_vendidas($unidadesVend);
+        $producto->setGenero($genero);
         $entityManager->persist($producto);
         $entityManager->flush();
         $data = [
