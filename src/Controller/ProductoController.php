@@ -42,6 +42,27 @@ class ProductoController extends AbstractController
 
     return $this->json($data, 200);
     }
+    #[Route('/verId/{id}', name: '_verId', methods: ['get'])]
+    public function verId(EntityManagerInterface $entityManager,Request $request,int $id): JsonResponse
+    {
+        $producto = $entityManager->getRepository(Producto::class)->find($id);
+        if (!$producto) {
+            return $this->json('Producto no encontrado  ' . $id, 404);
+        }
+        $data = [
+            'id' => $producto->getId(),
+            'nombre' => $producto->getNombre(),
+            'descripcion' => $producto->getDescripcion(),
+            'precio' => $producto->getPrecio(),
+            'id_categoria' => $producto->getCategoria()->getId(),
+            'marca' => $producto->getMarca(),
+            'foto' => $producto->getFoto(),
+            'stock' => $producto->getStock(),
+            'unidades_vendidas' => $producto->getUnidades_vendidas(),
+            'genero' => $producto->getGenero()
+        ];
+        return $this->json($data, 200);
+    }
     #[Route('/masVendidos', name: '_masVendidos', methods: ['get'])]
     public function masVendidos(EntityManagerInterface $entityManager): JsonResponse
     {
@@ -72,7 +93,7 @@ class ProductoController extends AbstractController
         $categoria = $entityManager->getRepository(Categoria::class)->find($data['id_categoria']);
         $producto->setCategoria($categoria);
         $producto->setFoto($data['foto']);
-        $producto->setStock($data['stock']);
+        $producto->setStock($data['stock']);                                                         
         $producto->setUnidades_vendidas($data['unidades_vendidas']);
         $producto->setGenero($data['genero']);
         $entityManager->persist($producto);
